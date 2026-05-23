@@ -111,7 +111,6 @@ async function logAndNotify(details, type) {
     initiator: details.initiator || details.originUrl || "unknown",
   };
 
-  console.log("Intercepted :", type, details, entry);
   await appendLog(entry);
   api.runtime.sendMessage({ type: "REQUEST_BLOCKED", entry }).catch(() => {});
 }

@@ -12,17 +12,16 @@ async function refreshLog() {
 }
 
 function renderLog(logs) {
-    content = document.getElementById('req-list')
+    content = document.getElementById('req-list');
     content.innerHTML = "";
-    counter = document.getElementById('counter')
+    counter = document.getElementById('counter');
     getTabsRequests(logs).then((tabLogs) => {
-        counter.innerText = tabLogs.length
+        counter.innerText = tabLogs.length;
         tabLogs.forEach(request => {
-            content.appendChild(genReqElement(request))
-            content.appendChild(document.createElement('hr'))
+            content.appendChild(genReqElement(request));
+            content.appendChild(document.createElement('hr'));
         });
-        console.log(tabLogs.length)
-        genShield(tabLogs.length)
+        genShield(tabLogs.length);
     })
 }
 
@@ -61,7 +60,7 @@ async function getCurrentTab() {
 
 async function getTabsRequests(logs) {
     return await getCurrentTab().then((tab) => {
-        return logs.filter((request) => request.tabId === tab.id)
+        return logs.filter((request) => request.tabId === tab.id);
     })
 }
 
@@ -102,7 +101,6 @@ function parseBM(req) {
 }
 
 function parseReq(req) {
-    console.log("recieved", req)
     if (req.url.indexOf('/matomo.php') > -1) {
         return parseMatomo(req)
     } else if (req.url.indexOf('/bm_info') > -1) {
@@ -111,52 +109,49 @@ function parseReq(req) {
 }
 
 function genReqElement(req) {
-    const data = parseReq(req)
-    let elem = JSON.stringify(data)
-    let reqElem = document.createElement('div')
-    reqElem.className = "request"
+    const data = parseReq(req);
+    let elem = JSON.stringify(data);
+    let reqElem = document.createElement('div');
+    reqElem.className = "request";
     if (data.type === "matomo") {
         elem = `
-                <h2>Traqueur de visite</h2>
-                <p>Nature: visite de la page ${data["action_name"]}</p>
-                <p>Capturée par ED à <b>${data["h"]+":"+data["m"]+" et "+data["s"]}s</b>.</p>
-                <p>Depuis la page <b>${data["url"]}</b> de résolution <b>${data["res"]}px</b>.</p>
-                <details>
-                    <summary>Détails de la requête (infos sensibles)</summary>
-                    ${genDetailsCode(data)}
-                </details>
-        `
+            <h2>Traqueur de visite</h2>
+            <p>Nature: visite de la page ${data["action_name"]}</p>
+            <p>Capturée par ED à <b>${data["h"]+":"+data["m"]+" et "+data["s"]}s</b>.</p>
+            <p>Depuis la page <b>${data["url"]}</b> de résolution <b>${data["res"]}px</b>.</p>
+            <details>
+                <summary>Détails de la requête (infos sensibles)</summary>
+                ${genDetailsCode(data)}
+            </details>
+        `;
     } else if (data.type === "bm") {
         elem = `
-            <div class="request">
-                <h2>Traqueur d'action</h2>
-                <p>Nature: actions/informations</p>
-                <p>Capturée par ED à <b>${data.date.getHours()+":"+data.date.getMinutes()+" et "+data.date.getSeconds()}s</b>.</p>
-                <p>Depuis la page <b>${data.fullURL}</b>, ${data["Elapsed_Time"]/1000}s après le chargement de la page</b>.</p>
-                <details>
-                    <summary>Détails de la requête (infos sensibles)</summary>
-                    ${genDetailsCode(data)}
-                </details>
-            </div>`
+            <h2>Traqueur d'action</h2>
+            <p>Nature: actions/informations</p>
+            <p>Capturée par ED à <b>${data.date.getHours()+":"+data.date.getMinutes()+" et "+data.date.getSeconds()}s</b>.</p>
+            <p>Depuis la page <b>${data.fullURL}</b>, ${data["Elapsed_Time"]/1000}s après le chargement de la page</b>.</p>
+            <details>
+                <summary>Détails de la requête (infos sensibles)</summary>
+                ${genDetailsCode(data)}
+            </details>
+        `;
     }
     reqElem.innerHTML = elem;
 
     reqElem.querySelector('.copy-json').onclick = function() {
         navigator.clipboard.writeText(JSON.stringify(req));
-        console.log('click')
     }
     reqElem.querySelector('.copy').onclick = function() {
         navigator.clipboard.writeText(reqElem.querySelector('code').innerText);
-        console.log('click')
     }
 
-    return reqElem
+    return reqElem;
 }
 
 function genDetailsList(req) {
     let html = "<ul>";
     Object.keys(req).forEach(key => {
-        html += `<li><strong>${escHtml(key)}:</strong> ${escHtml(req[key])}</li>`
+        html += `<li><strong>${escHtml(key)}:</strong> ${escHtml(req[key])}</li>`;
     });
     return html + "</ul>";
 }
@@ -174,18 +169,18 @@ function genDetailsCode(req) {
 
     let html = "";
     Object.keys(req).forEach(key => {
-        html += `${escHtml(key)}: ${escHtml(req[key])}<br>`
+        html += `${escHtml(key)}: ${escHtml(req[key])}<br>`;
     });
 
-    copyBtns.appendChild(copyJSON)
-    copyBtns.appendChild(copyText)
+    copyBtns.appendChild(copyJSON);
+    copyBtns.appendChild(copyText);
 
-    code = document.createElement('code')
-    code.innerHTML = html
+    code = document.createElement('code');
+    code.innerHTML = html;
 
-    completHTML = document.createElement('div')
-    completHTML.appendChild(copyBtns)
-    completHTML.appendChild(code)
+    completHTML = document.createElement('div');
+    completHTML.appendChild(copyBtns);
+    completHTML.appendChild(code);
 
     return completHTML.outerHTML.toString();
 }
@@ -193,7 +188,7 @@ function genDetailsCode(req) {
 function genShield(n) {
     let shield = document.getElementsByTagName('svg')[0];
     let text = document.getElementById('tspan-nb');
-    text.innerHTML = n
+    text.innerHTML = n;
 }
 
 refreshLog();
