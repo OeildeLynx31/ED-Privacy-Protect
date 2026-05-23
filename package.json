@@ -1,4 +1,6 @@
 {
+  "name": "ed-privacy-protect",
+  "version": "0.0.1",
   "dependencies": {
     "web-ext": "^10.2.0"
   },

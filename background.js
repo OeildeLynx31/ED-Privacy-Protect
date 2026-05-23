@@ -2,79 +2,57 @@
 // Compatible Chrome, Edge et Firefox (MV2).
 // Blocklist statique — pas de gestion dynamique depuis le popup.
 
-// ── Shim cross-browser ────────────────────────────────────────────────────────
-// Firefox expose `browser` (promises natives) ; Chrome expose `chrome` (callbacks).
-console.log('check!')
-const api = (() => {
-  if (typeof browser !== "undefined" && browser.runtime) return browser;
-
-  const promisify = (fn) => (...args) =>
-    new Promise((resolve, reject) => {
-      fn(...args, (result) => {
-        if (chrome.runtime.lastError) reject(new Error(chrome.runtime.lastError.message));
-        else resolve(result);
-      });
-    });
-
-  return {
-    storage: {
-      local: {
-        get: promisify(chrome.storage.local.get.bind(chrome.storage.local)),
-        set: promisify(chrome.storage.local.set.bind(chrome.storage.local)),
-      },
-    },
-    runtime: {
-      sendMessage: (...a) =>
-        new Promise((resolve) => {
-          chrome.runtime.sendMessage(...a, (r) => {
-            void chrome.runtime.lastError; // supprime l'erreur "no receiving end"
-            resolve(r);
-          });
-        }),
-      onMessage: chrome.runtime.onMessage,
-    },
-    webRequest: chrome.webRequest,
-  };
-})();
+console.log('ED Privacy Protect background script initialized');
 
 const TextDec = new TextDecoder();
 
-// ── Blocklist statique ────────────────────────────────────────────────────────
-// Modifier cette liste pour ajouter/retirer des règles.
-// Supporte les wildcards `*` et les sous-chaînes simples.
-const BLOCKLIST = [
+// ── Blocklist ────────────────────────────────────────────────────────────────
+const BLOCKLIST_PATTERNS = [
   "*/matomo.php",
   "*/bm_info"
 ];
+
+// Pre-compile BLOCKLIST patterns into RegExps for better performance.
+const BLOCKLIST = BLOCKLIST_PATTERNS.map((p) => {
+  try {
+    const escaped = p
+      .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+      .replace(/\*/g, ".*");
+    return new RegExp(escaped, "i");
+  } catch (e) {
+    console.error(`Invalid blocklist pattern: ${p}`, e);
+    return null;
+  }
+}).filter(Boolean);
 
 // ── Constantes ────────────────────────────────────────────────────────────────
 const MAX_LOG = 200;
 
 // ── Helpers storage ───────────────────────────────────────────────────────────
 async function getLog() {
-  const res = await api.storage.local.get("blockedLog");
-  return res.blockedLog || [];
+  try {
+    const res = await api.storage.local.get("blockedLog");
+    return res.blockedLog || [];
+  } catch (e) {
+    console.error("Error getting log from storage:", e);
+    return [];
+  }
 }
 
 async function appendLog(entry) {
-  const log = await getLog();
-  log.unshift(entry);
-  if (log.length > MAX_LOG) log.length = MAX_LOG;
-  await api.storage.local.set({ blockedLog: log });
+  try {
+    const log = await getLog();
+    log.unshift(entry);
+    if (log.length > MAX_LOG) log.length = MAX_LOG;
+    await api.storage.local.set({ blockedLog: log });
+  } catch (e) {
+    console.error("Error appending log to storage:", e);
+  }
 }
 
 // ── Correspondance URL / pattern ──────────────────────────────────────────────
 function matchesBlocklist(url) {
-  return BLOCKLIST.some((p) => {
-    try {
-      const escaped = p
-        .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
-        .replace(/\*/g, ".*");
-      return new RegExp(escaped, "i").test(url);
-    } catch {
-      return url.includes(p);
-    }
-  });
+  return BLOCKLIST.some((regex) => regex.test(url));
 }
 
 // ── Interception des requêtes ─────────────────────────────────────────────────
@@ -103,19 +81,24 @@ api.webRequest.onBeforeRequest.addListener(
 );
 
 async function logAndNotify(details, type) {
-  let data = {};
-  if (type == "headers") {
-    data = details.requestHeaders.find((header) => header.name === "Cookie").value;
-  } else if (type == "body" && !details.requestBody.hasOwnProperty('error')) {
-    if (details.requestBody.hasOwnProperty('raw') && details.requestBody.raw.length > 0) {
-      console.log(details.requestBody)
-      data = TextDec.decode(details.requestBody.raw[0].bytes);
-    } else {
-      data = details.requestBody.formData.data
+  let data = "";
+  try {
+    if (type === "headers" && details.requestHeaders) {
+      const cookieHeader = details.requestHeaders.find(
+        (header) => header.name.toLowerCase() === "cookie"
+      );
+      data = cookieHeader ? cookieHeader.value : "";
+    } else if (type === "body" && details.requestBody && !details.requestBody.error) {
+      if (details.requestBody.raw && details.requestBody.raw.length > 0) {
+        data = TextDec.decode(details.requestBody.raw[0].bytes);
+      } else if (details.requestBody.formData && details.requestBody.formData.data) {
+        data = details.requestBody.formData.data;
+      }
     }
-  } else {
-    console.log('error reading ', details)
+  } catch (e) {
+    console.error("Error extracting data from request:", e, details);
   }
+
   const entry = {
     id:        `${Date.now()}-${Math.random().toString(36).slice(2)}`,
     url:       details.url,
@@ -123,11 +106,12 @@ async function logAndNotify(details, type) {
     type:      details.type,
     tabId:     details.tabId,
     timestamp: new Date().toISOString(),
-    cookie: data,
-    // Firefox utilise `originUrl`, Chrome utilise `initiator`
+    data:      data, // Renamed from cookie to data for clarity
+    // Firefox uses `originUrl`, Chrome uses `initiator`
     initiator: details.initiator || details.originUrl || "unknown",
   };
-  console.log("Intercepted :", type, details, entry)
+
+  console.log("Intercepted :", type, details, entry);
   await appendLog(entry);
   api.runtime.sendMessage({ type: "REQUEST_BLOCKED", entry }).catch(() => {});
 }
