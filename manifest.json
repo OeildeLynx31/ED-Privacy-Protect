@@ -11,13 +11,13 @@
   ],
   "background": {
     "scripts": [
-      "shim.js",
-      "background.js"
+      "background/shim.js",
+      "background/background.js"
     ],
     "persistent": true
   },
   "browser_action": {
-    "default_popup": "popup.html",
+    "default_popup": "popup/popup.html",
     "default_title": "ED Privacy Protect",
     "default_icon": "icons/icon_64.png"
   },
