@@ -187,7 +187,7 @@ function genDetailsCode(req) {
 
 function genShield(n) {
     let shield = document.getElementsByTagName('svg')[0];
-    let text = document.getElementById('tspan-nb');
+    let text = document.getElementById('tspan3');
     text.innerHTML = n;
 }
 
