@@ -80,6 +80,24 @@ api.webRequest.onBeforeRequest.addListener(
   ["blocking", "requestBody"]
 );
 
+// ── Filtrage des requêtes ─────────────────────────────────────────────────────
+/*api.webRequest.onBeforeSendHeaders.addListener(
+	(details) => {
+    const headers = details.requestHeaders;
+
+    // Only working on MV2, sooooo idk
+    const userAgent = details.requestHeaders.find((header) => header.name == "User-Agent")
+    userAgent.value = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0"
+
+    console.log(headers);
+
+    return { requestHeaders: headers };
+  },
+	{ urls: ["<all_urls>"] },
+	["blocking", "requestHeaders"]
+);*/
+
+// ── Manage blocked/modified requests ──────────────────────────────────────────
 async function logAndNotify(details, type) {
   let data = "";
   try {

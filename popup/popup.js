@@ -19,7 +19,6 @@ function renderLog(logs) {
         counter.innerText = tabLogs.length;
         tabLogs.forEach(request => {
             content.appendChild(genReqElement(request));
-            content.appendChild(document.createElement('hr'));
         });
         genShield(tabLogs.length);
     })
@@ -67,9 +66,12 @@ async function getTabsRequests(logs) {
 // ── PARSING ────────────────────────────────────────────────────────────────────
 
 function parseMatomo(req) {
+    console.log(req);
+    const reqURL = new URL(req.url)
     const data = {
         type: "matomo",
-        fullURL: req.url,
+        req_URL: reqURL.origin + reqURL.pathname,
+        req_fullURL: req.url,
         req_data: req.data
     }
     const url = new URL(req.url);
@@ -77,6 +79,7 @@ function parseMatomo(req) {
     for (const [key, value] of params.entries()) {
         data[key] = value;
     }
+    data["User-Agent"] = navigator.userAgent; // even if it is not in the URL params, it's given in the request headers
     return data;
 }
 
@@ -84,7 +87,8 @@ function parseBM(req) {
     const date = new Date(req.timestamp);
     const data = {
         type: "bm",
-        fullURL: req.url,
+        req_URL: req.url,
+        req_fullURL: req.url,
         date: date
     }
     try {
@@ -115,26 +119,30 @@ function genReqElement(req) {
     reqElem.className = "request";
     if (data.type === "matomo") {
         elem = `
-            <h2>Traqueur de visite</h2>
-            <p>Nature: visite de la page ${data["action_name"]}</p>
-            <p>Capturée par ED à <b>${data["h"]+":"+data["m"]+" et "+data["s"]}s</b>.</p>
-            <p>Depuis la page <b>${data["url"]}</b> de résolution <b>${data["res"]}px</b>.</p>
+            <p class="reqTitle">Requête bloquée</p>
+            <p class="reqURL">${data["req_URL"]}</p>
+            <p class="reqTag">visite</p>
+            <p class="reqTime">à ${data["h"]+"h"+data["m"]+" et "+data["s"]}s</p>
+            <p> Traceur envoyé depuis la page EcoleDirecte ${data["url"].slice(data["url"].indexOf('com/')+3)}.</p>
             <details>
-                <summary>Détails de la requête (infos sensibles)</summary>
+                <summary>Données de la requête (infos sensibles)</summary>
                 ${genDetailsCode(data)}
             </details>
         `;
+        reqElem.setAttribute("actionType", "blocked")
     } else if (data.type === "bm") {
         elem = `
-            <h2>Traqueur d'action</h2>
-            <p>Nature: actions/informations</p>
-            <p>Capturée par ED à <b>${data.date.getHours()+":"+data.date.getMinutes()+" et "+data.date.getSeconds()}s</b>.</p>
-            <p>Depuis la page <b>${data.fullURL}</b>, ${data["Elapsed_Time"]/1000}s après le chargement de la page</b>.</p>
+            <p class="reqTitle">Requête bloquée</p>
+            <p class="reqURL">${data["req_URL"]}</p>
+            <p class="reqTag">actions/infos</p>
+            <p class="reqTime">à ${data.date.getHours()+"h"+data.date.getMinutes()+" et "+data.date.getSeconds()}s</p>
+            <p> Traceur envoyé depuis la page EcoleDirecte ${data["uri"]}.</p>
             <details>
-                <summary>Détails de la requête (infos sensibles)</summary>
+                <summary>Données de la requête (infos sensibles)</summary>
                 ${genDetailsCode(data)}
             </details>
         `;
+        reqElem.setAttribute("actionType", "blocked")
     }
     reqElem.innerHTML = elem;
 
@@ -144,6 +152,8 @@ function genReqElement(req) {
     reqElem.querySelector('.copy').onclick = function() {
         navigator.clipboard.writeText(reqElem.querySelector('code').innerText);
     }
+
+    reqElem.appendChild(document.createElement('hr'))
 
     return reqElem;
 }
