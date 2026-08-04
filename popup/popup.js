@@ -39,10 +39,12 @@ api.runtime.onMessage.addListener((msg) => {
 });
 
 // ── UTILS ────────────────────────────────────────────────────────────────────
-function escHtml(s) {
-  return String(s)
-    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;");
+
+function sanitize(str) {
+    let fakeTextarea = document.createElement('textarea');
+    let text = document.createTextNode(str);
+    fakeTextarea.appendChild(text);
+    return fakeTextarea.innerHTML;
 }
 
 function shortHost(url) {
@@ -120,10 +122,10 @@ function genReqElement(req) {
     if (data.type === "matomo") {
         elem = `
             <p class="reqTitle">Requête bloquée</p>
-            <p class="reqURL">${data["req_URL"]}</p>
+            <p class="reqURL">${sanitize(data["req_URL"])}</p>
             <p class="reqTag">visite</p>
-            <p class="reqTime">à ${data["h"]+"h"+data["m"]+" et "+data["s"]}s</p>
-            <p> Traceur envoyé depuis la page EcoleDirecte ${data["url"].slice(data["url"].indexOf('com/')+3)}.</p>
+            <p class="reqTime">à ${sanitize(data["h"])+"h"+sanitize(data["m"])+" et "+sanitize(data["s"])}s</p>
+            <p> Traceur envoyé depuis la page EcoleDirecte ${sanitize(data["url"].slice(data["url"].indexOf('com/')+3))}.</p>
             <details>
                 <summary>Données de la requête (infos sensibles)</summary>
                 ${genDetailsCode(data)}
@@ -133,10 +135,10 @@ function genReqElement(req) {
     } else if (data.type === "bm") {
         elem = `
             <p class="reqTitle">Requête bloquée</p>
-            <p class="reqURL">${data["req_URL"]}</p>
+            <p class="reqURL">${sanitize(data["req_URL"])}</p>
             <p class="reqTag">actions/infos</p>
             <p class="reqTime">à ${data.date.getHours()+"h"+data.date.getMinutes()+" et "+data.date.getSeconds()}s</p>
-            <p> Traceur envoyé depuis la page EcoleDirecte ${data["uri"]}.</p>
+            <p> Traceur envoyé depuis la page EcoleDirecte ${sanitize(data["uri"])}.</p>
             <details>
                 <summary>Données de la requête (infos sensibles)</summary>
                 ${genDetailsCode(data)}
@@ -161,7 +163,7 @@ function genReqElement(req) {
 function genDetailsList(req) {
     let html = "<ul>";
     Object.keys(req).forEach(key => {
-        html += `<li><strong>${escHtml(key)}:</strong> ${escHtml(req[key])}</li>`;
+        html += `<li><strong>${sanitize(key)}:</strong> ${sanitize(req[key])}</li>`;
     });
     return html + "</ul>";
 }
@@ -179,7 +181,7 @@ function genDetailsCode(req) {
 
     let html = "";
     Object.keys(req).forEach(key => {
-        html += `${escHtml(key)}: ${escHtml(req[key])}<br>`;
+        html += `${sanitize(key)}: ${sanitize(req[key])}<br>`;
     });
 
     copyBtns.appendChild(copyJSON);
