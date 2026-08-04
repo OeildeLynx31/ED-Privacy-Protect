@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "ED Privacy Protect",
   "description": "Protégez vos données personnelles et vos actions sur le site web d'Ecole Directe.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "permissions": [
     "webRequest",
     "webRequestBlocking",
