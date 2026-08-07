@@ -2,8 +2,6 @@
 // Compatible Chrome, Edge et Firefox (MV2).
 // Blocklist statique — pas de gestion dynamique depuis le popup.
 
-console.log('ED Privacy Protect background script initialized');
-
 const TextDec = new TextDecoder();
 
 // ── Blocklist ────────────────────────────────────────────────────────────────
@@ -64,7 +62,7 @@ api.webRequest.onBeforeSendHeaders.addListener(
 
     return { cancel: true };
   },
-  { urls: ["<all_urls>"] },
+  { urls: ["*://*.ecoledirecte.com/*"] },
   ["blocking", "requestHeaders"]
 );
 
@@ -76,26 +74,9 @@ api.webRequest.onBeforeRequest.addListener(
 
     return { cancel: true };
   },
-  { urls: ["<all_urls>"] },
+  { urls: ["*://*.ecoledirecte.com/*"] },
   ["blocking", "requestBody"]
 );
-
-// ── Filtrage des requêtes ─────────────────────────────────────────────────────
-/*api.webRequest.onBeforeSendHeaders.addListener(
-	(details) => {
-    const headers = details.requestHeaders;
-
-    // Only working on MV2, sooooo idk
-    const userAgent = details.requestHeaders.find((header) => header.name == "User-Agent")
-    userAgent.value = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.0"
-
-    console.log(headers);
-
-    return { requestHeaders: headers };
-  },
-	{ urls: ["<all_urls>"] },
-	["blocking", "requestHeaders"]
-);*/
 
 // ── Manage blocked/modified requests ──────────────────────────────────────────
 async function logAndNotify(details, type) {

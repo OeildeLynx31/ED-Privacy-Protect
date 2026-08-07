@@ -29,7 +29,7 @@ Cette installation est gratuite : aucun compte développeur du Chrome Web Store 
 
 ## Respect de la vie privée
 
-La version Chromium s'appuie sur les règles déclaratives de Manifest V3. Elle ne demande pas l'accès à tous les sites et ne peut pas lire les cookies, les corps de requêtes ni les paramètres des URL. Son journal local ne conserve que des métadonnées non sensibles (endpoint, hôte, type, onglet et horaire), avec une limite de 200 entrées.
+Les deux versions limitent leurs permissions aux pages de `*.ecoledirecte.com`. La version Chromium s'appuie sur les règles déclaratives de Manifest V3 et ne peut pas lire les cookies, les corps de requêtes ni les paramètres des URL. Son journal local ne conserve que des métadonnées non sensibles (endpoint, hôte, type, onglet et horaire), avec une limite de 200 entrées.
 
 ## Développement
 

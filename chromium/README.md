@@ -1,6 +1,6 @@
 # ED Privacy Protect — Chromium
 
-Cette version Manifest V3 est destinée aux navigateurs Chromium (Arc, Chrome, Edge, Brave…). Elle bloque les requêtes vers `matomo.php` et `bm_info` uniquement lorsqu'elles sont initiées par EcoleDirecte, sans pouvoir lire les cookies, les corps de requêtes ou les paramètres d'URL.
+Cette version Manifest V3 est destinée aux navigateurs Chromium (Arc, Chrome, Edge, Brave…). Ses permissions sont limitées à `*.ecoledirecte.com`. Elle bloque les requêtes vers `matomo.php` et `bm_info` uniquement lorsqu'elles sont initiées par EcoleDirecte, sans pouvoir lire les cookies, les corps de requêtes ou les paramètres d'URL.
 
 ## Installation locale
 

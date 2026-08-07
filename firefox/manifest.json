@@ -7,7 +7,7 @@
     "webRequest",
     "webRequestBlocking",
     "storage",
-    "<all_urls>"
+    "*://*.ecoledirecte.com/*"
   ],
   "background": {
     "scripts": [

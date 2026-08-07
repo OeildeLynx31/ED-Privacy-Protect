@@ -1,6 +1,6 @@
 # ED Privacy Protect — Firefox
 
-Cette version Firefox (Manifest V2) bloque les traceurs EcoleDirecte (Matomo, BM Info, etc.). Elle est publiée sur le [catalogue officiel Firefox](https://addons.mozilla.org/fr/firefox/addon/ed-privacy-protect/).
+Cette version Firefox (Manifest V2) bloque les traceurs EcoleDirecte (Matomo, BM Info, etc.) et ne demande l'accès qu'à `*.ecoledirecte.com`. Elle est publiée sur le [catalogue officiel Firefox](https://addons.mozilla.org/fr/firefox/addon/ed-privacy-protect/).
 
 ## Installation
 

@@ -8,6 +8,9 @@
     "declarativeNetRequest",
     "declarativeNetRequestFeedback"
   ],
+  "host_permissions": [
+    "*://*.ecoledirecte.com/*"
+  ],
   "background": {
     "service_worker": "background/background.js"
   },
