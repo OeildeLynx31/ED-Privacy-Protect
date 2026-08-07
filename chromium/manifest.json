@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "ED Privacy Protect",
+  "description": "Bloque les traceurs EcoleDirecte sans collecter de données sensibles.",
+  "version": "2.0.0",
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback"
+  ],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "ED Privacy Protect",
+    "default_icon": "icons/icon_64.png"
+  },
+  "icons": {
+    "32": "icons/icon_32.png",
+    "64": "icons/icon_64.png",
+    "128": "icons/icon_128.png",
+    "256": "icons/icon_256.png"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ed_trackers",
+        "enabled": true,
+        "path": "rules/trackers.json"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ed-privacy-protect-chromium",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "web-ext run -t chromium",
+    "build": "web-ext build",
+    "check": "node --check background/background.js && node --check popup/popup.js && node -e \"for (const file of ['manifest.json', 'rules/trackers.json']) JSON.parse(require('fs').readFileSync(file, 'utf8'))\""
+  },
+  "devDependencies": {
+    "web-ext": "^10.2.0"
+  }
+}
