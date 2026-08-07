@@ -1,2 +1,4 @@
-web-ext-artifacts
-node_modules
+firefox/node_modules/
+firefox/web-ext-artifacts/
+chromium/node_modules/
+chromium/web-ext-artifacts/
