@@ -68,7 +68,6 @@ async function getTabsRequests(logs) {
 // ── PARSING ────────────────────────────────────────────────────────────────────
 
 function parseMatomo(req) {
-    console.log(req);
     const reqURL = new URL(req.url)
     const data = {
         type: "matomo",

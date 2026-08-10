@@ -1,0 +1,148 @@
+body {
+    width: 500px;
+    height: 600px;
+    padding: 0px;
+    margin: 0px;
+    font-family: helvetica;
+}
+
+header {
+    background-color: #b9e3ff;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #1f4877;
+    text-shadow: 0px 0px 100px #1f4877;
+    user-select: none;
+
+    #icon {
+        height: 35%;
+        width: 35%;
+    }
+}
+
+#panel-log {
+
+    #panel-head {
+        padding: 0rem 1rem;
+
+        button {
+            float: right;
+            background-color: #0e8ac9;
+            color: #fff;
+            border-radius: 5px;
+            border: none;
+            padding: .25rem .5rem;
+            margin-top: -.5rem;
+            transition: ease .2s;
+            cursor: pointer;
+
+            img {
+                width: 1.5rem;
+            }
+        }
+
+        button:hover {
+            background-color: #b11266;
+        }
+    }
+
+    .request {
+        padding: 1rem 1.5rem;
+        padding-bottom: 0px;
+        position: relative;
+
+        details {
+            margin-top: .5rem;
+        }
+
+
+        .reqTitle {
+            margin: 0px;
+            margin-left: -.5rem;
+            font-size: x-large;
+            font-weight: bold;
+        }
+
+        .reqURL {
+            color:#999;
+            font-weight: bold;
+            font-size: small;
+            margin-top: .1rem;
+        }
+
+        .reqTag {
+            position: absolute;
+            top: .8rem;
+            right: 1rem;
+
+            background-color: #4c8ad1;
+            color: white;
+            border-radius: 20px;
+
+            font-weight: bold;
+            font-size: .9rem;
+            padding: 3px 6px;
+        }
+
+        .reqTime {
+            position: absolute;
+            top: -.2rem;
+            right: 1rem;
+
+            color: #999;
+
+            font-size: .8rem;
+        }
+
+
+        summary {
+            cursor: pointer;
+            color: #0e8ac9;
+            font-weight: bold;
+        }
+
+        code {
+            background-color: #eee;
+            padding: .5rem .7rem;
+            border-radius: .5rem;
+            display: block;
+            overflow-x: scroll;
+        }
+
+        #buttonBar {
+            position: absolute;
+            right: 1rem;
+            padding-right: .5rem;
+
+            button {
+                float: right;
+                border: none;
+                background-color: #ccc;
+                margin: .2rem;
+                padding: .1rem .2rem;
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #bbb;
+            }
+        }
+    }
+    .request[actionType="blocked"] {
+        background-color: rgb(255, 222, 222);
+
+        .reqTag {
+            background-color: #ac0000;
+        }
+    }
+
+    hr {
+        margin: 0 .5rem;
+        margin-top: .5rem;
+        border: 1px solid #9999;
+    }
+}

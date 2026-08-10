@@ -6,7 +6,6 @@
   },
   "scripts": {
     "dev": "web-ext run",
-    "dev-c": "web-ext run -t chromium",
     "build": "web-ext build",
     "http": "npx http-server"
   }

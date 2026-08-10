@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "^https?://([a-z0-9-]+\\.)?ecoledirecte\\.com/.*/?matomo\\.php([/?#]|$)",
+      "initiatorDomains": ["ecoledirecte.com"],
+      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest", "ping", "image", "script", "other"]
+    }
+  },
+  {
+    "id": 2,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "regexFilter": "^https?://([a-z0-9-]+\\.)?ecoledirecte\\.com/.*/?bm_info([/?#]|$)",
+      "initiatorDomains": ["ecoledirecte.com"],
+      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest", "ping", "image", "script", "other"]
+    }
+  }
+]
